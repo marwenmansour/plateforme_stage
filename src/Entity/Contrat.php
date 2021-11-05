@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ContratRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -36,6 +38,28 @@ class Contrat
      * @ORM\Column(type="text")
      */
     private $pdf;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Facture::class, mappedBy="id_contrat")
+     */
+    private $id_contrat;
+
+    /**
+     * @ORM\OneToOne(targetEntity=DossierAdherent::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $dossier_id;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Facture::class, mappedBy="contrat_id")
+     */
+    private $contrat_id;
+
+    public function __construct()
+    {
+        $this->id_contrat = new ArrayCollection();
+        $this->contrat_id = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -86,6 +110,78 @@ class Contrat
     public function setPdf(string $pdf): self
     {
         $this->pdf = $pdf;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Facture[]
+     */
+    public function getIdContrat(): Collection
+    {
+        return $this->id_contrat;
+    }
+
+    public function addIdContrat(Facture $idContrat): self
+    {
+        if (!$this->id_contrat->contains($idContrat)) {
+            $this->id_contrat[] = $idContrat;
+            $idContrat->setIdContrat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIdContrat(Facture $idContrat): self
+    {
+        if ($this->id_contrat->removeElement($idContrat)) {
+            // set the owning side to null (unless already changed)
+            if ($idContrat->getIdContrat() === $this) {
+                $idContrat->setIdContrat(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDossierId(): ?DossierAdherent
+    {
+        return $this->dossier_id;
+    }
+
+    public function setDossierId(DossierAdherent $dossier_id): self
+    {
+        $this->dossier_id = $dossier_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Facture[]
+     */
+    public function getContratId(): Collection
+    {
+        return $this->contrat_id;
+    }
+
+    public function addContratId(Facture $contratId): self
+    {
+        if (!$this->contrat_id->contains($contratId)) {
+            $this->contrat_id[] = $contratId;
+            $contratId->setContratId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContratId(Facture $contratId): self
+    {
+        if ($this->contrat_id->removeElement($contratId)) {
+            // set the owning side to null (unless already changed)
+            if ($contratId->getContratId() === $this) {
+                $contratId->setContratId(null);
+            }
+        }
 
         return $this;
     }

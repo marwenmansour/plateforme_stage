@@ -47,6 +47,11 @@ class Adherents
      */
     private $adresse_perso;
 
+    /**
+     * @ORM\OneToOne(targetEntity=DossierAdherent::class, mappedBy="id_adherent", cascade={"persist", "remove"})
+     */
+    private $id_adherent;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +125,23 @@ class Adherents
     public function setAdressePerso(string $adresse_perso): self
     {
         $this->adresse_perso = $adresse_perso;
+
+        return $this;
+    }
+
+    public function getIdAdherent(): ?DossierAdherent
+    {
+        return $this->id_adherent;
+    }
+
+    public function setIdAdherent(DossierAdherent $id_adherent): self
+    {
+        // set the owning side of the relation if necessary
+        if ($id_adherent->getIdAdherent() !== $this) {
+            $id_adherent->setIdAdherent($this);
+        }
+
+        $this->id_adherent = $id_adherent;
 
         return $this;
     }

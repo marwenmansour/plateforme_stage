@@ -37,6 +37,18 @@ class Intervention
      */
     private $pieces_jointes;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Demande::class, inversedBy="interventions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $demande_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Agents::class, inversedBy="interventions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $agent_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +98,30 @@ class Intervention
     public function setPiecesJointes(string $pieces_jointes): self
     {
         $this->pieces_jointes = $pieces_jointes;
+
+        return $this;
+    }
+
+    public function getDemandeId(): ?Demande
+    {
+        return $this->demande_id;
+    }
+
+    public function setDemandeId(?Demande $demande_id): self
+    {
+        $this->demande_id = $demande_id;
+
+        return $this;
+    }
+
+    public function getAgentId(): ?Agents
+    {
+        return $this->agent_id;
+    }
+
+    public function setAgentId(?Agents $agent_id): self
+    {
+        $this->agent_id = $agent_id;
 
         return $this;
     }

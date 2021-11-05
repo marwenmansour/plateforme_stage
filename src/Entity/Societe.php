@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SocieteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,6 +43,28 @@ class Societe
      * @ORM\Column(type="text")
      */
     private $pieces_justificatives;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=DossierAdherent::class, inversedBy="id_societe")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $id_societe;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=DossierAdherent::class, inversedBy="societe_id")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $societe_id;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Demande::class, mappedBy="societe_id")
+     */
+    private $demandes;
+
+    public function __construct()
+    {
+        $this->demandes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,6 +127,60 @@ class Societe
     public function setPiecesJustificatives(string $pieces_justificatives): self
     {
         $this->pieces_justificatives = $pieces_justificatives;
+
+        return $this;
+    }
+
+    public function getIdSociete(): ?DossierAdherent
+    {
+        return $this->id_societe;
+    }
+
+    public function setIdSociete(?DossierAdherent $id_societe): self
+    {
+        $this->id_societe = $id_societe;
+
+        return $this;
+    }
+
+    public function getSocieteId(): ?DossierAdherent
+    {
+        return $this->societe_id;
+    }
+
+    public function setSocieteId(?DossierAdherent $societe_id): self
+    {
+        $this->societe_id = $societe_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Demande[]
+     */
+    public function getDemandes(): Collection
+    {
+        return $this->demandes;
+    }
+
+    public function addDemande(Demande $demande): self
+    {
+        if (!$this->demandes->contains($demande)) {
+            $this->demandes[] = $demande;
+            $demande->setSocieteId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemande(Demande $demande): self
+    {
+        if ($this->demandes->removeElement($demande)) {
+            // set the owning side to null (unless already changed)
+            if ($demande->getSocieteId() === $this) {
+                $demande->setSocieteId(null);
+            }
+        }
 
         return $this;
     }
